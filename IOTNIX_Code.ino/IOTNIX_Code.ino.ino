@@ -14,7 +14,7 @@ char pass[] = "96694092";
 #define DHTPIN 4
 #define DHTTYPE DHT11
 #define MQ6PIN 34
-#define RELAY_PIN 12
+#define RELAY_PIN 13
 
 DHT dht(DHTPIN, DHTTYPE);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -35,7 +35,7 @@ void setup() {
   // 2. WiFi Connection (Non-Blocking)
   Serial.println("Connecting WiFi...");
   WiFi.begin(ssid, pass);
-  Blynk.config(BLYNK_AUTH_TOKEN); // Blynk.begin ki jagah config use karein
+  Blynk.config(BLYNK_AUTH_TOKEN); 
   
   lcd.setCursor(0, 1);
   lcd.print("System Ready...");
@@ -59,18 +59,19 @@ void loop() {
   lcd.setCursor(0, 1);
   lcd.print("G:"); lcd.print(gasVal); 
 
-  // 5. Automation Logic (Hamesha chalega)
-  if(h > 70.0 || gasVal > 1500) {
-    digitalWrite(RELAY_PIN, LOW);
+
+if(h > 40.0 || gasVal > 1500) { 
+    digitalWrite(RELAY_PIN, LOW);   // Relay ON ho jayega agar humidity 40 se upar hai
     lcd.setCursor(11, 1);
     lcd.print("!ON ");
     if (WiFi.status() == WL_CONNECTED) Blynk.virtualWrite(V3, 255);
-  } else {
-    digitalWrite(RELAY_PIN, HIGH);
+} else {
+    digitalWrite(RELAY_PIN, HIGH);  // Relay OFF
     lcd.setCursor(11, 1);
     lcd.print(" OK ");
     if (WiFi.status() == WL_CONNECTED) Blynk.virtualWrite(V3, 0);
-  }
+}
+
 
   // 6. Cloud Data Sync
   if (WiFi.status() == WL_CONNECTED) {
